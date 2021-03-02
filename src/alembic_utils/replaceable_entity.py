@@ -1,4 +1,5 @@
 # pylint: disable=unused-argument,invalid-name,line-too-long
+import re
 import logging
 from itertools import zip_longest
 from pathlib import Path
@@ -127,11 +128,16 @@ class ReplaceableEntity:
         """A string that consistently and globally identifies a function"""
         return f"{self.__class__.__name__}: {self.schema}.{self.signature}"
 
-    def to_variable_name(self) -> str:
+    @staticmethod
+    def _str2pyvar(s: str) -> str:
+        """Create a string ready to be used as a python variable name"""
+        return re.sub("\W|^(?=\d)", "_", s)
+
+    def to_variable_name() -> str:
         """A deterministic variable name based on PGFunction's contents """
         schema_name = self.schema.lower()
         object_name = self.signature.split("(")[0].strip().lower()
-        return f"{schema_name}_{object_name}"
+        return self._str2pyvar(f"{schema_name}_{object_name}")
 
     def get_required_migration_op(
         self: T, sess: Session, dependencies: Optional[List["ReplaceableEntity"]] = None

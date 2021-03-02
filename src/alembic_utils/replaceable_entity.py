@@ -133,7 +133,7 @@ class ReplaceableEntity:
         """Create a string ready to be used as a python variable name"""
         return re.sub("\W|^(?=\d)", "_", s)
 
-    def to_variable_name() -> str:
+    def to_variable_name(self) -> str:
         """A deterministic variable name based on PGFunction's contents """
         schema_name = self.schema.lower()
         object_name = self.signature.split("(")[0].strip().lower()
